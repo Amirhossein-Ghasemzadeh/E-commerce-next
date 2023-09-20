@@ -12,7 +12,7 @@ datasource db {
 model Store {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  userId     String
+  userId     String    
   billboards Billboard[]
 
   createdAt DateTime @default(now())
@@ -24,7 +24,7 @@ model Billboard {
   storeId String @db.ObjectId
   store   Store  @relation(fields: [storeId], references: [id])
   label   String
-
+  imageUrl    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

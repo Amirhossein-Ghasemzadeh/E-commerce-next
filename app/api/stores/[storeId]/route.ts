@@ -56,7 +56,7 @@ export async function DELETE(
       return new NextResponse('Name is required', {status: 400});
     }
 
-    const store = await prismadb.store.delete({
+    const store = await prismadb.store.deleteMany({
       where: {
         id: params.storeId,
         userId,
