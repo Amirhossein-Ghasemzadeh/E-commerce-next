@@ -15,10 +15,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {Button} from '@/components/ui/button';
 import AlertModal from '@/components/modals/alert-modal';
-import {BillboardColumn} from './columns';
+import {ColorColumn} from './columns';
 
 interface CellActionProps {
-  data: BillboardColumn;
+  data: ColorColumn;
 }
 
 const CellAction: React.FC<CellActionProps> = ({data}) => {
@@ -30,20 +30,18 @@ const CellAction: React.FC<CellActionProps> = ({data}) => {
 
   const onCopy = (description: string) => {
     navigator.clipboard.writeText(description);
-    toast.success('Billboard Id copied to the clipboard.');
+    toast.success('color Id copied to the clipboard.');
   };
 
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${data.id}`);
+      await axios.delete(`/api/${params.storeId}/colors/${data.id}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success('Billboard deleted.');
+      router.push(`/${params.storeId}/colors`);
+      toast.success('color deleted.');
     } catch (error: any) {
-      toast.error(
-        'Make sure you removed all categories using this billboard first.'
-      );
+      toast.error('Make sure you removed all products using this color first.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -71,9 +69,7 @@ const CellAction: React.FC<CellActionProps> = ({data}) => {
             <Copy className='mr-2 h-4 w-4' /> Copy Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() =>
-              router.push(`/${params.storeId}/billboards/${data.id}`)
-            }>
+            onClick={() => router.push(`/${params.storeId}/colors/${data.id}`)}>
             <Edit className='mr-2 h-4 w-4' /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
