@@ -17,6 +17,8 @@ model Store {
   categories Category[]
   color      Color[]
   size       Size[]
+  product    Product[]
+  order      Order[]
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
 }
@@ -40,6 +42,7 @@ model Category {
   store       Store     @relation(fields: [storeId], references: [id])
   billboardId String    @db.ObjectId
   billboard   Billboard @relation(fields: [billboardId], references: [id])
+  products    Product[]
   name        String
 
   createdAt DateTime @default(now())
@@ -50,25 +53,93 @@ model Category {
 }
 
 model Size {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  storeId   String   @db.ObjectId
-  store     Store    @relation(fields: [storeId], references: [id])
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  storeId   String    @db.ObjectId
+  store     Store     @relation(fields: [storeId], references: [id])
+  products  Product[]
   name      String
   value     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@index([storeId])
 }
 
 model Color {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  storeId   String   @db.ObjectId
-  store     Store    @relation(fields: [storeId], references: [id])
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  storeId   String    @db.ObjectId
+  store     Store     @relation(fields: [storeId], references: [id])
+  products  Product[]
   name      String
   value     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([storeId])
+}
+
+model Product {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  storeId    String      @db.ObjectId
+  store      Store       @relation(fields: [storeId], references: [id])
+  categoryId String      @db.ObjectId
+  category   Category    @relation(fields: [categoryId], references: [id])
+  name       String
+  price      Float
+  isFeatured Boolean     @default(false)
+  isArchived Boolean     @default(false)
+  sizeId     String      @db.ObjectId
+  size       Size        @relation(fields: [sizeId], references: [id])
+  colorId    String      @db.ObjectId
+  color      Color       @relation(fields: [colorId], references: [id])
+  images     Image[]
+  OrderItem  OrderItem[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@index([storeId], name: "Product_storeId_idx")
+  @@index([categoryId], name: "Product_categoryId_idx")
+  @@index([sizeId], name: "Product_sizeId_idx")
+  @@index([colorId], name: "Product_colorId_idx")
+}
+
+model Image {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String // URL of the image
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([productId])
+}
+
+model Order {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  storeId    String      @db.ObjectId
+  store      Store       @relation(fields: [storeId], references: [id])
+  orderItems OrderItem[]
+  isPaid     Boolean     @default(false)
+  phone      String      @default("")
+  address    String      @default("")
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
   @@index([storeId])
+}
+
+model OrderItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId   String   @db.ObjectId
+  order     Order    @relation(fields: [orderId], references: [id])
+  productId String   @db.ObjectId
+  product   Product  @relation(fields: [productId], references: [id])
+  isPaid    Boolean  @default(false)
+  phone     String   @default("")
+  address   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderId], name: "OrderItem_orderId_idx")
+  @@index([productId], name: "OrderItem_productId_idx")
 }
